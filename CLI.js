@@ -23,6 +23,11 @@ function init() {
         EMPLOYEE TRACKER 
 ----------------------------------`)
 
+    // try {
+
+    // } catch(err) {
+    //     console.log(err)
+    // }
     inquirer.prompt([
         {
             type: 'list',
@@ -36,10 +41,56 @@ function init() {
                 'Add a new department',
                 'Add a new role',
                 'Add a new employee',
-                'Update employee'
+                'Update employee',
+                'quit',
             ]
         }
     ]).then(answer => {
-        console.log(answer.action)
+        switch (answer.action) {
+            case 'View all':
+                viewAll();
+                break;
+            case 'View all by department id':
+                break;
+            case 'View all by role id':
+                break;
+            case 'View all by employee id':
+                break;
+            case 'Add a new department':
+                break;
+            case 'Add a new role':
+                break;
+            case 'Add a new employee':
+                break;
+            case 'Update employee':
+                break;
+            case 'quit':
+                console.log('goodbye!')
+                connection.end();
+                break;
+            default:
+                console.log('Oops! Something went wrong.');
+                init();
+                break;
+        }
+        
     })
+}
+
+function viewAll() {
+    const results = []
+    connection.query(
+        `SELECT 
+            employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name
+        FROM employee 
+        INNER JOIN role ON (role.id = employee.role_id)
+        INNER JOIN department ON (role.department_id = department.id)`,
+        function (err, result) {
+            result.forEach(element => {
+                results.push(element)
+            });
+            console.table(results);
+            init();
+        }
+    )
 }
