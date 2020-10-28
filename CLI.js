@@ -90,7 +90,48 @@ function updateEmployee() {
     
 }
 function addEmployee() {
-    
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'firstname',
+            message: 'Input first name:'
+        },
+        {
+            type: 'input',
+            name: 'lastname',
+            message: 'Input last name:'
+        },
+        {
+            type: 'input',
+            name: 'role',
+            message: 'Input role id:'
+        },
+        {
+            type: 'input',
+            name: 'manager',
+            message: 'Input manager id:',
+            default: 'NULL'
+        },
+    ]).then(employee => {
+        let query;
+        if (employee.manager === 'NULL') {
+            query = `INSERT INTO employee(first_name, last_name, role_id) VALUES (?, ?, ?)`
+        } else {
+            query = `INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`
+        }
+        connection.query(
+            // SET first_name=?, last_name=?, role_id=?, manager_id=?;
+            query,
+            [
+                employee.firstname, employee.lastname, employee.role, employee.manager
+            ],
+            function (err, result) {
+                if (err) throw err;
+                console.log(`\nInserted [${employee.firstname}, ${employee.lastname}, ${employee.role}, ${employee.manager}] into employee table!`)
+                init();
+            }
+        )
+    })
 }
 function addRole() {
     inquirer.prompt([
