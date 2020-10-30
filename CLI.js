@@ -37,7 +37,7 @@ function init() {
                 'View all departments',
                 'View all roles',
                 'View all employees',
-                'View employees by manager name',
+                // 'View employees by manager name',
                 'Add a new department',
                 'Add a new role',
                 'Add a new employee',
@@ -59,9 +59,9 @@ function init() {
             case 'View all employees':
                 viewEmployees();
                 break;
-            case 'View employees by manager name':
-                viewByManager(); //
-                break;
+            // case 'View employees by manager name':
+            //     viewByManager(); //
+            //     break;
             case 'Add a new department':
                 addDepartment();
                 break;
