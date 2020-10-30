@@ -87,7 +87,46 @@ function init() {
 }
 
 function updateEmployee() {
-    
+    connection.query(
+        'select id, first_name, last_name from employee',
+        function (err, result) {
+            const results = [];
+            if (err) throw err;
+            result.forEach(element => {
+                results.push(element.id+': '+ element.first_name +' '+ element.last_name)
+            });
+            inquirer.prompt([
+                {
+                    type: "list",
+                    name: 'employee',
+                    message: 'Which employee would you like to update?',
+                    choices: results
+                },
+                {
+                    type: "list",
+                    name: 'update',
+                    message: 'What would you like to update?',
+                    choices: ['first_name', 'last_name', 'role_id', 'manager_id']
+                },
+                {
+                    type: 'input',
+                    name: 'change',
+                    message: `What would you like to update it to?`
+                }
+            ]).then(answer => {
+                let id = answer.employee.split(': ').shift();
+                connection.query(
+                    `update employee set ${answer.update}=? where id=?`,
+                    [answer.change ,id],
+                    function (err, result) {
+                        if (err) throw err;
+                        console.log(`updated employee's ${answer.update}!`);
+                        init();
+                    }
+                )
+            })
+        }
+    )
 }
 function addEmployee() {
     inquirer.prompt([
@@ -120,11 +159,8 @@ function addEmployee() {
             query = `INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`
         }
         connection.query(
-            // SET first_name=?, last_name=?, role_id=?, manager_id=?;
             query,
-            [
-                employee.firstname, employee.lastname, employee.role, employee.manager
-            ],
+            [employee.firstname, employee.lastname, employee.role, employee.manager],
             function (err, result) {
                 if (err) throw err;
                 console.log(`\nInserted [${employee.firstname}, ${employee.lastname}, ${employee.role}, ${employee.manager}] into employee table!`)
@@ -154,9 +190,7 @@ function addRole() {
         connection.query(
             `INSERT INTO role(title, salary, department_id)
             VALUES (?, ?, ?)`,
-            [role.name,
-            role.salary,
-            role.department],
+            [role.name, role.salary, role.department],
             function (err, result) {
                 if (err) throw err;
                 console.log(`\nInserted [${role.name}, ${role.salary}, ${role.department}] into role table!`)
